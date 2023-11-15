@@ -85,21 +85,28 @@ app.post('/upload', upload.single('file'), (req, res) => {
       res.status(500).send('Error saving file to database.');
     });
 });
+
 app.get('/download', async (req, res) => {
   try {
-    // Find the latest uploaded file in the database
-    const latestFile = await File.findOne().sort({ _id: -1 });
+    const fileName = req.query.fileName;
 
-    if (!latestFile) {
-      return res.status(404).send('No files found for download.');
+    if (!fileName) {
+      return res.status(400).send('Please provide a file name for download.');
+    }
+
+    // Find the file in the database based on the provided file name
+    const file = await File.findOne({ fileName });
+
+    if (!file) {
+      return res.status(404).send('File not found for download.');
     }
 
     // Create a readable stream from the file data
     const fileStream = new stream.PassThrough();
-    fileStream.end(latestFile.fileData);
+    fileStream.end(file.fileData);
 
     // Set the response headers for download
-    res.setHeader('Content-disposition', 'attachment; filename=' + latestFile.fileName);
+    res.setHeader('Content-disposition', 'attachment; filename=' + file.fileName);
     res.setHeader('Content-type', 'application/pdf');
 
     // Pipe the file stream to the response
@@ -109,6 +116,7 @@ app.get('/download', async (req, res) => {
     res.status(500).send('Error downloading file.');
   }
 });
+
 app.get('/pdfs', async (req, res) => {
   try {
     // Fetch all uploaded PDFs from the database
