@@ -21,33 +21,33 @@
         <h2>Uploaded PDFs</h2>
         <ul id="pdfList"></ul>
     </div>
-
-    <form id="downloadForm" action="/download" method="get">
-        <label for="selectedPdf">Select PDF to Download:</label>
-        <select id="selectedPdf" name="selectedPdf"></select>
-        <button type="submit">Download PDF</button>
-    </form>
     
-   
-</body>
+<form id="downloadForm" action="/download" method="get">
+    <label for="selectedPdf">Select PDF to Download:</label>
+    <select id="selectedPdf" name="fileName"></select> <!-- Corrected: name="fileName" -->
+    <button type="submit">Download PDF</button>
+</form>
+
 <script>
+    // Update the list of uploaded PDFs dynamically
     fetch('/pdfs')
-            .then(response => response.json())
-            .then(data => {
-                const pdfList = document.getElementById('pdfList');
-                const selectedPdfDropdown = document.getElementById('selectedPdf');
+        .then(response => response.json())
+        .then(data => {
+            const pdfList = document.getElementById('pdfList');
+            const selectedPdfDropdown = document.getElementById('selectedPdf');
 
-                data.forEach(pdf => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = pdf.fileName;
+            data.forEach(pdf => {
+                const listItem = document.createElement('li');
+                listItem.textContent = pdf.fileName;
 
-                    const option = document.createElement('option');
-                    option.value = pdf.fileName;
-                    option.textContent = pdf.fileName;
+                const option = document.createElement('option');
+                option.value = pdf.fileName;
+                option.textContent = pdf.fileName;
 
-                    pdfList.appendChild(listItem);
-                    selectedPdfDropdown.appendChild(option);
-                });
+                pdfList.appendChild(listItem);
+                selectedPdfDropdown.appendChild(option);
             });
+        });
 </script>
+</body>
 </html>
